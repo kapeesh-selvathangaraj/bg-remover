@@ -24,11 +24,17 @@ def main():
             result = removebg(uploaded_file)
             st.image(result, caption="Image with Background Removed", use_column_width=True)
 
+            # Convert the PIL Image to bytes
+            result_bytes = BytesIO()
+            result.save(result_bytes, format="PNG")
+            result_bytes = result_bytes.getvalue()
+
             # Add download option for the processed image
             download_btn = st.download_button(
                 label="Download Processed Image",
-                data=result,
+                data=result_bytes,
                 file_name="processed_image.png",
+                mime="image/png",
                 key="processed_image",
                 help="Click to download the processed image."
             )
