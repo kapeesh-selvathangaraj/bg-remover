@@ -33,12 +33,19 @@ def main():
                 result_bytes = result_bytesio.getvalue()
 
                 # Create a download link
-                st.download_button(
-                    label="Download Processed Image",
-                    data=result_bytes,
-                    file_name="processed_image.png",
-                    mime="image/png",
-                )
+                st.markdown(get_binary_file_downloader_html(result_bytes, file_label="Processed Image"), unsafe_allow_html=True)
+
+def get_binary_file_downloader_html(bin_file, file_label='File'):
+    with open(bin_file, 'wb') as f:
+        f.write(bin_file)
+
+    bin_file_path = f.name
+    with open(bin_file_path, 'rb') as f:
+        bin_file_data = f.read()
+
+    bin_str = base64.b64encode(bin_file_data).decode()
+    href = f'<a href="data:application/octet-stream;base64,{bin_str}" download="bg-removed.png">Download processed image </a>'
+    return href
 
 if __name__ == "__main__":
     main()
