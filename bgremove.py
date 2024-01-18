@@ -24,5 +24,21 @@ def main():
             result = removebg(uploaded_file)
             st.image(result, caption="Image with Background Removed", use_column_width=True)
 
+            # Add download option for the processed image
+            download_btn = st.button("Download Processed Image")
+            if download_btn:
+                # Save the processed image to a BytesIO buffer
+                result_bytesio = BytesIO()
+                result.save(result_bytesio, format="PNG")
+                result_bytes = result_bytesio.getvalue()
+
+                # Create a download link
+                st.download_button(
+                    label="Download Processed Image",
+                    data=result_bytes,
+                    file_name="processed_image.png",
+                    mime="image/png",
+                )
+
 if __name__ == "__main__":
     main()
