@@ -15,13 +15,25 @@ def removebg(img):
 
 def main():
     st.title("Background Remover App")
+
+    # Upload image
     uploaded_file = st.file_uploader("Choose an image ...", type=["jpg", "jpeg", "png"])
 
+    # Additional options using sidebar
+    with st.sidebar:
+        st.header("Options")
+        # You can add more options here
+
     if uploaded_file is not None:
+        # Display uploaded image
         st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
 
+        # Button to remove background
         if st.button("Remove Background"):
+            # Process the image
             result = removebg(uploaded_file)
+
+            # Display processed image
             st.image(result, caption="Image with Background Removed", use_column_width=True)
 
             # Convert the PIL Image to bytes
