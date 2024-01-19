@@ -21,6 +21,10 @@ def main():
     # Upload image
     uploaded_file = st.file_uploader("Choose an image ...", type=["jpg", "jpeg", "png"])
 
+    # Additional options using sidebar
+    with st.sidebar:
+        st.header("Options")
+
     if uploaded_file is not None:
         # Display uploaded image
         st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
