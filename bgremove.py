@@ -2,9 +2,8 @@ import streamlit as st
 from PIL import Image
 from rembg import remove
 from io import BytesIO
-from bokeh.models import ColumnDataSource, FreehandDrawTool, GlyphRenderer
+from bokeh.models import ColumnDataSource, FreehandDrawTool
 from bokeh.plotting import figure
-from bokeh.io import show
 
 def removebg(img, mask):
     # Convert the uploaded file to bytes
@@ -37,13 +36,10 @@ def main():
         # Create a ColumnDataSource for the image
         img_data = {'url': [uploaded_file]}
         source = ColumnDataSource(data=img_data)
-        plot.image_url(url='url', x=0, y=0, w=1, h=1, source=source)
-
-        # Create a GlyphRenderer for the plot
-        glyph_renderer = plot.select(dict(type=GlyphRenderer))
+        glyph_renderer = plot.image_url(url='url', x=0, y=0, w=1, h=1, source=source)
 
         # Add FreehandDrawTool to the plot
-        draw_tool = FreehandDrawTool(renderers=[glyph_renderer], num_objects=1)
+        draw_tool = FreehandDrawTool(renderers=glyph_renderer, num_objects=1)
         plot.add_tools(draw_tool)
         plot.toolbar.active_drag = draw_tool
 
