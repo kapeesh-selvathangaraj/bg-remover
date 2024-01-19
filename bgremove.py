@@ -34,9 +34,10 @@ def main():
         plot = figure(width=400, height=400, title="Draw a mask to select object")
         plot.axis.visible = False
 
-        # Create a ColumnDataSource for drawing tool
-        source = ColumnDataSource(data=dict(image=[], x=[], y=[]))
-        plot.image_url(url=[uploaded_file], x=0, y=0, w=1, h=1, source=source)
+        # Create a ColumnDataSource for the image
+        img_data = {'url': [uploaded_file]}
+        source = ColumnDataSource(data=img_data)
+        plot.image_url(url='url', x=0, y=0, w=1, h=1, source=source)
 
         # Add FreehandDrawTool to the plot
         draw_tool = FreehandDrawTool(renderers=[plot], num_objects=1)
