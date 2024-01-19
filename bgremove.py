@@ -48,32 +48,36 @@ def main():
 
         # Button to remove background
         if st.button("Remove Background"):
-            # Get the drawn mask from the Bokeh plot
-            mask = source.data['image'][0] if source.data['image'] else None
+            try:
+                # Get the drawn mask from the Bokeh plot
+                mask = source.data['image'][0] if source.data['image'] else None
 
-            if mask is None:
-                st.warning("Please draw a mask to select the object.")
-            else:
-                # Process the image
-                result = removebg(uploaded_file, mask)
+                if mask is None:
+                    st.warning("Please draw a mask to select the object.")
+                else:
+                    # Process the image
+                    result = removebg(uploaded_file, mask)
 
-                # Display processed image
-                st.image(result, caption="Image with Background Removed", use_column_width=True)
+                    # Display processed image
+                    st.image(result, caption="Image with Background Removed", use_column_width=True)
 
-                # Convert the PIL Image to bytes
-                result_bytes = BytesIO()
-                result.save(result_bytes, format="PNG")
-                result_bytes = result_bytes.getvalue()
+                    # Convert the PIL Image to bytes
+                    result_bytes = BytesIO()
+                    result.save(result_bytes, format="PNG")
+                    result_bytes = result_bytes.getvalue()
 
-                # Add download option for the processed image
-                download_btn = st.download_button(
-                    label="Download Processed Image",
-                    data=result_bytes,
-                    file_name="processed_image.png",
-                    mime="image/png",
-                    key="processed_image",
-                    help="Click to download the processed image."
-                )
+                    # Add download option for the processed image
+                    download_btn = st.download_button(
+                        label="Download Processed Image",
+                        data=result_bytes,
+                        file_name="processed_image.png",
+                        mime="image/png",
+                        key="processed_image",
+                        help="Click to download the processed image."
+                    )
+
+            except Exception as e:
+                st.error(f"An error occurred: {str(e)}")
 
 if __name__ == "__main__":
     main()
