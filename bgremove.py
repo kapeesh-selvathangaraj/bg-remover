@@ -2,13 +2,16 @@ import streamlit as st
 from PIL import Image
 from rembg import remove
 from io import BytesIO
+from bokeh.models import ColumnDataSource, FreehandDrawTool
+from bokeh.plotting import figure
+from bokeh.io import show
 
-def removebg(img, remove_objects):
+def removebg(img, mask):
     # Convert the uploaded file to bytes
     img_bytes = img.read()
 
-    # Process the image using removebg with specified removal objects
-    output_bytes = remove(img_bytes, target_objects=remove_objects)
+    # Process the image using removebg with a mask
+    output_bytes = remove(img_bytes, target_mask=mask)
 
     # Return the result as a PIL Image
     return Image.open(BytesIO(output_bytes))
@@ -22,22 +25,37 @@ def main():
     # Additional options using sidebar
     with st.sidebar:
         st.header("Options")
-        # Create a multi-select widget for removal objects
-        remove_objects = st.multiselect("Select Objects to Remove", ["Person", "Car", "Background"])
-        # You can add more objects to the list as needed
 
     if uploaded_file is not None:
         # Display uploaded image
         st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
 
+        # Create Bokeh plot for drawing
+        plot = figure(width=400, height=400, title="Draw a mask to select object")
+        plot.axis.visible = False
+
+        # Create a ColumnDataSource for drawing tool
+        source = ColumnDataSource(data=dict(image=[], x=[], y=[]))
+        plot.image_url(url=[uploaded_file], x=0, y=0, w=1, h=1, source=source)
+
+        # Add FreehandDrawTool to the plot
+        draw_tool = FreehandDrawTool(renderers=[plot], num_objects=1)
+        plot.add_tools(draw_tool)
+        plot.toolbar.active_drag = draw_tool
+
+        # Display the Bokeh plot
+        st.bokeh_chart(plot, use_container_width=True)
+
         # Button to remove background
         if st.button("Remove Background"):
-            # Check if any objects are selected
-            if not remove_objects:
-                st.warning("Please select at least one object to remove.")
+            # Get the drawn mask from the Bokeh plot
+            mask = source.data['image'][0] if source.data['image'] else None
+
+            if mask is None:
+                st.warning("Please draw a mask to select the object.")
             else:
                 # Process the image
-                result = removebg(uploaded_file, remove_objects)
+                result = removebg(uploaded_file, mask)
 
                 # Display processed image
                 st.image(result, caption="Image with Background Removed", use_column_width=True)
