@@ -39,7 +39,7 @@ def main():
         glyph_renderer = plot.image_url(url='url', x=0, y=0, w=1, h=1, source=source)
 
         # Add FreehandDrawTool to the plot
-        draw_tool = FreehandDrawTool(renderers=glyph_renderer, num_objects=1)
+        draw_tool = FreehandDrawTool(renderers=[glyph_renderer], num_objects=1)
         plot.add_tools(draw_tool)
         plot.toolbar.active_drag = draw_tool
 
